@@ -1,5 +1,6 @@
 import requests
 import json
+import re
 
 def set_data(name: str = None):
     payload1 = {
@@ -33,7 +34,7 @@ def set_data(name: str = None):
     }
     return header, payload1
 
-def search_song(song_name: str, artist: str = None, show_count: int = None, all_hit: bool = False):
+def search_song(song_name: str, artist: str = None, show_count: int = None, all_hit: bool = False, include_sabikara: bool = False):
     """
     
     曲を検索します
@@ -54,9 +55,17 @@ def search_song(song_name: str, artist: str = None, show_count: int = None, all_
         >>> jysdlib.search_song("勇者", show_count=15)
         ※ すべて表示する場合
         >>> jysdlib.search_song("勇者", all_hit=True)
-
+        ※ [サビカラ]を含める場合
+        >>> jysdlib.search_song("勇者", include_sabikara=True)
+        ※ [サビカラ]を含めない場合
+        >>> jysdlib.search_song("勇者", include_sabikara=False)
     """
-
+    
+    if include_sabikara == False:
+        removed_sabikara_count = 0
+    else:
+        removed_sabikara_count = None
+    
     header = set_data()[0]
     get_hitcount = requests.post("https://mspxy.joysound.com/Common/ContentsList", data=set_data(song_name)[1], headers=header)
     hitcount = get_hitcount.json()["contentsHitCount"]
@@ -66,14 +75,24 @@ def search_song(song_name: str, artist: str = None, show_count: int = None, all_
         payload["count"] = hitcount        
     elif all_hit == False and (show_count != None and show_count != 5):
         payload["count"] = show_count
-        
+    
     res = requests.post("https://mspxy.joysound.com/Common/ContentsList", data=payload, headers=header)
     for artist_data in res.json()["contentsList"]:
         if artist != None:
-            if artist_data.get('artistName', '').lower() == 'yoasobi' and '勇者' in artist_data.get('songName', '').lower():
-                get_data = json.dumps(artist_data, indent=4, ensure_ascii=False)
-                print(json.loads(get_data)["songName"])
+            if re.search(rf'{artist}', artist_data.get('artistName', ''), re.IGNORECASE) and re.search(rf'{song_name}', artist_data.get('songName', ''), re.IGNORECASE):
+                if not include_sabikara and re.search(r'\[サビカラ\]', artist_data.get('songName', ''), re.IGNORECASE):
+                    removed_sabikara_count += 1
+                else:
+                
+                    get_data = json.dumps(artist_data, indent=4, ensure_ascii=False)
+                    print(json.loads(get_data)["songName"])
             
         else:    
-            get_data = json.dumps(artist_data, indent=4, ensure_ascii=False)
-            print(json.loads(get_data)["songName"])
+            if re.search(rf'{song_name}', artist_data.get('songName', ''), re.IGNORECASE):
+                if not include_sabikara and re.search(r'\[サビカラ\]', artist_data.get('songName', ''), re.IGNORECASE):
+                    removed_sabikara_count += 1
+                else:
+                    get_data = json.dumps(artist_data, indent=4, ensure_ascii=False)
+                    print(json.loads(get_data)["songName"])
+    if include_sabikara == False:
+        print("[サビカラ] を", removed_sabikara_count,"個削除しました")
