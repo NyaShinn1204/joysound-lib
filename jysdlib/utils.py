@@ -121,3 +121,20 @@ def get_lyric(songid: int):
     res = requests.post("https://mspxy.joysound.com/Common/Lyric", data=set_data(songid=songid)[2], headers=header)
     for lyric_data in res.json()["lyricList"]:
         print(lyric_data["lyric"])
+        
+def get_daily_ranking():
+    """
+    
+    デイリーランキングを取得します
+    100件から変更は不可能です
+
+    #### Useage
+
+        >>> import jysdlib
+        >>> jysdlib.get_daily_ranking()
+    """
+    
+    header = set_data()[0]
+    res = requests.get("https://www.joysound.com/web/feature/karaoke/ranking/contents/all_daily.json", headers=header)
+    for hot_data in res.json()["genreRankingList"]:
+        print(hot_data["songName"])
