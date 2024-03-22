@@ -125,7 +125,7 @@ def get_lyric(songid: int):
     for lyric_data in res.json()["lyricList"]:
         print(lyric_data["lyric"])
         
-def get_daily_ranking():
+def get_daily_ranking(top_rank: bool = False):
     """
     
     デイリーランキングを取得します
@@ -135,9 +135,13 @@ def get_daily_ranking():
 
         >>> import jysdlib
         >>> jysdlib.get_daily_ranking()
+        ※ トップだけを返すようにする場合
+        >>> jysdlib.get_daily_ranking(top_rank=True)
     """
     
     header = set_data()[0]
     res = requests.get("https://www.joysound.com/web/feature/karaoke/ranking/contents/all_daily.json", headers=header)
     for hot_data in res.json()["genreRankingList"]:
         print(hot_data["songName"])
+    if top_rank:
+        return res.json()["genreRankingList"][0]
