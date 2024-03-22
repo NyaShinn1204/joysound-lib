@@ -40,8 +40,7 @@ def set_data(name: str = None, songid: int = None):
     }
     return header, payload1, payload2
 
-def search_song(song_name: str, artist: str = None, show_count: int = None, all_hit: bool = False, include_sabikara: bool = False):
-    songs = []
+def search_song(song_name: str, artist: str = None, show_count: int = None, all_hit: bool = False, include_sabikara: bool = False, show_debug: bool = False):
     """
     
     曲を検索します
@@ -70,6 +69,8 @@ def search_song(song_name: str, artist: str = None, show_count: int = None, all_
         >>> jysdlib.search_song("勇者", include_sabikara=False)
     """
     
+    songs = []
+    
     if include_sabikara == False:
         removed_sabikara_count = 0
     else:
@@ -93,7 +94,8 @@ def search_song(song_name: str, artist: str = None, show_count: int = None, all_
                     removed_sabikara_count += 1
                 else:
                     get_data = json.dumps(artist_data, indent=4, ensure_ascii=False)
-                    print(json.loads(get_data)["songName"])
+                    if show_debug:
+                        print(json.loads(get_data)["songName"])
                 songs.append(json.loads(get_data)["naviGroupId"])
             
         else:    
@@ -102,9 +104,10 @@ def search_song(song_name: str, artist: str = None, show_count: int = None, all_
                     removed_sabikara_count += 1
                 else:
                     get_data = json.dumps(artist_data, indent=4, ensure_ascii=False)
-                    print(json.loads(get_data)["songName"])
+                    if show_debug:
+                        print(json.loads(get_data)["songName"])
                 songs.append(json.loads(get_data)["naviGroupId"])
-    if include_sabikara == False:
+    if include_sabikara == False and show_debug:
         print("[サビカラ] を", removed_sabikara_count,"個削除しました")
     return songs
         
@@ -125,7 +128,7 @@ def get_lyric(songid: int):
     for lyric_data in res.json()["lyricList"]:
         print(lyric_data["lyric"])
         
-def get_daily_ranking(top_rank: bool = False):
+def get_daily_ranking(top_rank: bool = False, show_debug: bool = False):
     """
     
     デイリーランキングを取得します
@@ -138,10 +141,15 @@ def get_daily_ranking(top_rank: bool = False):
         ※ トップだけを返すようにする場合
         >>> jysdlib.get_daily_ranking(top_rank=True)
     """
+
+    daily_rank = []
     
     header = set_data()[0]
     res = requests.get("https://www.joysound.com/web/feature/karaoke/ranking/contents/all_daily.json", headers=header)
     for hot_data in res.json()["genreRankingList"]:
-        print(hot_data["songName"])
+        if show_debug:
+            print(hot_data["songName"])
+        daily_rank.append(hot_data)
     if top_rank:
         return res.json()["genreRankingList"][0]
+    return daily_rank
