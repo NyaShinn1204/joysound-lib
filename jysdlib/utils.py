@@ -41,6 +41,7 @@ def set_data(name: str = None, songid: int = None):
     return header, payload1, payload2
 
 def search_song(song_name: str, artist: str = None, show_count: int = None, all_hit: bool = False, include_sabikara: bool = False):
+    songs = []
     """
     
     曲を検索します
@@ -91,9 +92,9 @@ def search_song(song_name: str, artist: str = None, show_count: int = None, all_
                 if not include_sabikara and re.search(r'\[サビカラ\]', artist_data.get('songName', ''), re.IGNORECASE):
                     removed_sabikara_count += 1
                 else:
-                
                     get_data = json.dumps(artist_data, indent=4, ensure_ascii=False)
                     print(json.loads(get_data)["songName"])
+                songs.append(json.loads(get_data)["naviGroupId"])
             
         else:    
             if re.search(rf'{song_name}', artist_data.get('songName', ''), re.IGNORECASE):
@@ -102,8 +103,10 @@ def search_song(song_name: str, artist: str = None, show_count: int = None, all_
                 else:
                     get_data = json.dumps(artist_data, indent=4, ensure_ascii=False)
                     print(json.loads(get_data)["songName"])
+                songs.append(json.loads(get_data)["naviGroupId"])
     if include_sabikara == False:
         print("[サビカラ] を", removed_sabikara_count,"個削除しました")
+    return songs
         
 def get_lyric(songid: int):
     """
