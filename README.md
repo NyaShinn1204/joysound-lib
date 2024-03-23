@@ -5,8 +5,6 @@
     </p>
 </p>
 
-## Coming Soon
-
 ## Installation
 
 **※ Python 3.10 以上のバージョンが必要です。**
