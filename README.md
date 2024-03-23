@@ -7,8 +7,6 @@
 
 ## Coming Soon
 
-<!--
-
 ## Installation
 
 **※ Python 3.10 以上のバージョンが必要です。**
@@ -19,12 +17,5 @@
 > 開発バージョンです! 注意をしてください
 
 ```bash
-git clone https://github.com/nyashinn1204/joysound-lib.git
-
-cd joysound-lib
-
-make setup
-
-make active
+pip install git+https://github.com/NyaShinn1204/joysound-lib
 ```
---!>
