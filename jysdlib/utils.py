@@ -15,12 +15,14 @@ def set_data(name: str = None, songid: int = None):
         "order": "desc",
         "apiVer": "1.0",
     }
+    
     payload2 = {
         "kind": "naviGroupId",
         "selSongNo": songid,
         "interactionFlg": "0",
         "apiVer": "1.0",
     }
+    
     header = {
         "Accept":"*application/json, text/plain, */*",
         "Accept-Encoding": "gzip, deflate, br",
@@ -38,6 +40,7 @@ def set_data(name: str = None, songid: int = None):
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
         "X-Jsp-App-Name": "0000800"
     }
+    
     return header, payload1, payload2
 
 def search_song(song_name: str, artist: str = None, show_count: int = None, all_hit: bool = False, include_sabikara: bool = False, show_debug: bool = False):
